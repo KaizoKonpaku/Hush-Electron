@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hush Settings</title>
+    <style>
+      body {
+        background-color: transparent;
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+      }
+
+      .settings-container {
+        min-width: 500px;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 10px 20px;
+        background-color: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(12px);
+        min-height: 100vh;
+        box-sizing: border-box;
+        overflow: auto;
+      }
+
+      .settings-section, 
+      .about-content, 
+      .shortcut-list,
+      .tabs {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        width: 100%;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .settings-section {
+        margin-bottom: 24px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0;
+      }
+
+      .settings-section h2 {
+        margin: 0 0 16px 0;
+        font-size: 12px;
+        font-weight: bolder;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .setting-item {
+        margin-bottom: 16px;
+      }
+
+      .setting-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .setting-item label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .setting-item input[type='text'],
+      .setting-item input[type='password'],
+      .setting-item textarea {
+        width: 100%;
+        padding: 8px 12px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 12px;
+        font-family: 'Menlo', monospace;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+        max-width: none;
+      }
+
+      .setting-item input[type='text']:focus,
+      .setting-item input[type='password']:focus,
+      .setting-item textarea:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.3);
+      }
+
+      .setting-item textarea {
+        min-height: 200px;
+        resize: vertical;
+        line-height: 1.4;
+        font-size: 12px;
+      }
+
+      .api-key-input {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        width: 100%;
+      }
+
+      .api-key-input input {
+        flex: 1;
+        height: 32px;
+      }
+
+      .api-key-input button {
+        height: 32px;
+        padding: 0 16px;
+        white-space: nowrap;
+      }
+
+      .api-key-input .secondary-button {
+        min-width: 60px;
+      }
+
+      button {
+        padding: 6px 12px;
+        border-radius: 0;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .primary-button {
+        background: rgba(255, 255, 255, 0.9);
+        color: black;
+        border: none;
+      }
+
+      .primary-button:hover {
+        background: white;
+      }
+
+      .secondary-button {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .secondary-button:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .button-group {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        margin-top: 8px;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 8px 12px;
+        background-color: rgba(255, 69, 58, 0.3);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 69, 58, 0.2);
+        color: white;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        border-radius: 0;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+      }
+
+      .notification.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .notification.error {
+        background-color: rgba(255, 69, 58, 0.3);
+        border-color: rgba(255, 69, 58, 0.2);
+      }
+
+      .notification.success {
+        background-color: rgba(48, 209, 88, 0.3);
+        border-color: rgba(48, 209, 88, 0.2);
+      }
+
+      /* Scrollbar Styles */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .tabs {
+        display: flex;
+        gap: 1px;
+        margin-bottom: 24px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .tab {
+        flex: 1;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.3);
+        color: rgba(255, 255, 255, 0.6);
+        border: none;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .tab.active {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      /* Keyboard Shortcuts Styles */
+      .shortcut-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .shortcut-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.3);
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .shortcut-keys {
+        display: flex;
+        gap: 4px;
+      }
+
+      .key {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 4px 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 11px;
+        min-width: 16px;
+        text-align: center;
+      }
+
+      /* About Section Styles */
+      .about-content {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .about-content h2 {
+        margin: 0 0 16px 0;
+        font-size: 20px;
+        font-weight: bolder;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .about-content p {
+        margin: 0 0 16px 0;
+        font-size: 12px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .version-info {
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Add features list styles */
+      .features-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .feature-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .feature-title {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 12px;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+      }
+
+      .feature-description {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 11px;
+        line-height: 1.4;
+        letter-spacing: 0.3px;
+      }
+
+      /* Adding a draggable title bar region */
+      .drag-region {
+        -webkit-app-region: drag;
+        width: 100%;
+        height: 30px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+      }
+
+      /* Adjust the content to account for the drag region */
+      .settings-container {
+        padding-top: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Add draggable region at the top -->
+    <div class="drag-region"></div>
+    
+    <div class="settings-container">
+      <div class="header">
+        <h1>Settings</h1>
+        <div class="shortcut-keys" style="margin-left: 10px">
+          <span class="key">⌘</span>
+          <span class="key">,</span>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="ai">AI CONFIGURATION</button>
+        <button class="tab" data-tab="shortcuts">KEYBOARD</button>
+        <button class="tab" data-tab="about">ABOUT</button>
+      </div>
+
+      <div id="ai" class="tab-content active">
+        <div class="settings-section">
+          <h2>API CONFIGURATION</h2>
+          <div class="setting-item">
+            <label>GOOGLE AI API KEY</label>
+            <div class="api-key-input">
+              <input
+                type="password"
+                id="api-key"
+                placeholder="ENTER YOUR API KEY"
+              />
+              <button id="save-api-key" class="primary-button">SAVE</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h2>AI ANALYSIS SETTINGS</h2>
+          <div class="setting-item">
+            <label>CUSTOM ANALYSIS PROMPT</label>
+            <textarea
+              id="custom-prompt"
+              placeholder="ENTER YOUR CUSTOM PROMPT TEMPLATE..."
+            ></textarea>
+            <div class="button-group">
+              <button id="reset-prompt" class="secondary-button">RESET</button>
+              <button id="save-prompt" class="primary-button">SAVE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="shortcuts" class="tab-content">
+        <div class="shortcut-list">
+          <div class="shortcut-item">
+            <span>Hide</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">H</span>
+            </div>
+          </div>
+          <div class="shortcut-item">
+            <span>CAPTURE SCREENSHOT</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">C</span>
+            </div>
+          </div>
+          <div class="shortcut-item">
+            <span>DELETE SCREENSHOT</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">D</span>
+            </div>
+          </div>
+          <div class="shortcut-item">
+            <span>PROCESS INPUT / ANSWER</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">↵</span>
+            </div>
+          </div>
+          <div class="shortcut-item">
+            <span>NEW CHAT / SESSION</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">N</span>
+            </div>
+          </div>
+          <div class="shortcut-item">
+            <span>OPEN/CLOSE SETTINGS</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">,</span>
+            </div>
+          </div>
+          <div class="shortcut-item">
+            <span>MOVE UP</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">↑</span>
+            </div>
+          </div>
+          <div class="shortcut-item">
+            <span>MOVE DOWN</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">↓</span>
+            </div>
+          </div>
+          <div class="shortcut-item">
+            <span>MOVE LEFT</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">←</span>
+            </div>
+          </div>
+          <div class="shortcut-item">
+            <span>MOVE RIGHT</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">→</span>
+            </div>
+          </div>
+          <div class="shortcut-item">
+            <span>QUIT APP</span>
+            <div class="shortcut-keys">
+              <span class="key">⌘</span>
+              <span class="key">Q</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="about" class="tab-content">
+        <div class="about-content">
+          <h2>HUSH</h2>
+          <p>
+            STAY FOCUSED WHILE SHARING YOUR SCREEN. HUSH REMAINS COMPLETELY
+            INVISIBLE DURING SCREEN SHARING WHILE PROVIDING QUICK ACCESS TO
+            AI-POWERED ASSISTANCE.
+          </p>
+          <ul class="features-list">
+            <li class="feature-item">
+              <span class="feature-title">INVISIBLE DURING SCREEN SHARING</span>
+              <span class="feature-description"
+                >COMPLETELY HIDDEN FROM VIEW DURING PRESENTATIONS OR SCREEN
+                RECORDINGS</span
+              >
+            </li>
+            <li class="feature-item">
+              <span class="feature-title">QUICK SCREENSHOT CAPTURE</span>
+              <span class="feature-description"
+                >INSTANTLY CAPTURE AND ANALYZE ANY PART OF YOUR SCREEN WITH A
+                SINGLE SHORTCUT</span
+              >
+            </li>
+            <li class="feature-item">
+              <span class="feature-title">AI-POWERED ANALYSIS</span>
+              <span class="feature-description"
+                >GET DETAILED CODE ANALYSIS AND SOLUTIONS USING ADVANCED AI
+                TECHNOLOGY</span
+              >
+            </li>
+            <li class="feature-item">
+              <span class="feature-title">GLOBAL KEYBOARD SHORTCUTS</span>
+              <span class="feature-description"
+                >CONTROL EVERY ASPECT OF THE APP WITHOUT TOUCHING YOUR
+                MOUSE</span
+              >
+            </li>
+            <li class="feature-item">
+              <span class="feature-title">ZERO CURSOR INTERACTION</span>
+              <span class="feature-description"
+                >DESIGNED TO WORK ENTIRELY WITH KEYBOARD SHORTCUTS FOR MAXIMUM
+                EFFICIENCY</span
+              >
+            </li>
+          </ul>
+          <div class="version-info">VERSION 1.2.0 MACOS MAY 2025</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+      const { ipcRenderer } = require('electron')
+
+      // Elements
+      const apiKeyInput = document.getElementById('api-key')
+      const saveApiKeyBtn = document.getElementById('save-api-key')
+      const customPromptInput = document.getElementById('custom-prompt')
+      const resetPromptBtn = document.getElementById('reset-prompt')
+      const savePromptBtn = document.getElementById('save-prompt')
+      const notification = document.getElementById('notification')
+      const tabs = document.querySelectorAll('.tab')
+      const tabContents = document.querySelectorAll('.tab-content')
+
+      // Default prompt template
+      const DEFAULT_PROMPT = `Analyze the coding problem in the screenshot and provide a clear, concise response in the following format:
+
+# Problem Statement
+Brief explanation of the problem and its key requirements.
+
+# My Thoughts
+- Overview of possible approaches to solve this problem
+- Key considerations and constraints
+- Edge cases to handle
+
+# Approach 1 (Best Solution)
+**Why this is the best:**
+- Explain why this approach is optimal
+- Key advantages over other approaches
+
+**Implementation:**
+\`\`\`language
+// Well-commented implementation of the best approach
+\`\`\`
+
+**Complexity:**
+- Time: O(X) - Brief explanation
+- Space: O(Y) - Brief explanation
+
+# Approach 2
+**Why consider this:**
+- Explain when this approach might be useful
+- Trade-offs compared to Approach 1
+
+**Implementation:**
+\`\`\`language
+// Implementation of second-best approach
+\`\`\`
+
+**Complexity:**
+- Time: O(X) - Brief explanation
+- Space: O(Y) - Brief explanation`
+
+      // Initialize tab functionality
+      function initializeTabs() {
+        tabs.forEach((tab) => {
+          tab.addEventListener('click', () => {
+            const targetTab = tab.getAttribute('data-tab')
+
+            // Update active tab button
+            tabs.forEach((t) => t.classList.remove('active'))
+            tab.classList.add('active')
+
+            // Update active content
+            tabContents.forEach((content) => {
+              if (content.id === targetTab) {
+                content.classList.add('active')
+                content.style.display = 'block'
+              } else {
+                content.classList.remove('active')
+                content.style.display = 'none'
+              }
+            })
+          })
+        })
+      }
+
+      // Initialize tabs when DOM is loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        initializeTabs()
+        ipcRenderer.send('get-settings')
+      })
+
+      // Receive settings from main process
+      ipcRenderer.on('settings-loaded', (event, settings) => {
+        if (settings.apiKey) {
+          apiKeyInput.value = settings.apiKey
+        }
+        if (settings.customPrompt) {
+          customPromptInput.value = settings.customPrompt
+        } else {
+          customPromptInput.value = DEFAULT_PROMPT
+        }
+      })
+
+      // Save API key
+      saveApiKeyBtn.addEventListener('click', () => {
+        const apiKey = apiKeyInput.value.trim()
+        if (apiKey) {
+          ipcRenderer.send('save-api-key', apiKey)
+          showNotification('API key saved successfully')
+        } else {
+          showNotification('Please enter a valid API key', true)
+        }
+      })
+
+      // Reset prompt to default
+      resetPromptBtn.addEventListener('click', () => {
+        customPromptInput.value = DEFAULT_PROMPT
+      })
+
+      // Save custom prompt
+      savePromptBtn.addEventListener('click', () => {
+        const prompt = customPromptInput.value.trim()
+        if (prompt) {
+          ipcRenderer.send('save-prompt', prompt)
+          showNotification('Prompt template saved successfully')
+        } else {
+          showNotification('Please enter a valid prompt template', true)
+        }
+      })
+
+      // Show notification
+      function showNotification(message, isError = false) {
+        notification.textContent = message
+        notification.className = `notification${isError ? ' error' : ''}`
+        notification.classList.add('show')
+
+        setTimeout(() => {
+          notification.classList.remove('show')
+        }, 3000)
+      }
+
+      // Handle settings update confirmation
+      ipcRenderer.on('settings-saved', () => {
+        showNotification('Settings saved successfully')
+      })
+
+      ipcRenderer.on('settings-error', (event, error) => {
+        showNotification(error, true)
+      })
+
+      // Add window resize handling
+      window.addEventListener('resize', () => {
+        // Ensure all content fits properly when window is resized
+        document.querySelectorAll('.tab-content.active').forEach(content => {
+          content.style.width = '100%';
+        });
+        
+        // Adjust any elements that need to be repositioned on resize
+        const settingsContainer = document.querySelector('.settings-container');
+        settingsContainer.style.height = `${window.innerHeight}px`;
+      });
+
+      // Initialize on load
+      window.addEventListener('load', () => {
+        const settingsContainer = document.querySelector('.settings-container');
+        settingsContainer.style.height = `${window.innerHeight}px`;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with padding (slightly smaller) -->
+  <rect x="102.4" y="102.4" width="819.2" height="819.2" rx="160" ry="160" fill="#000000"/>
+  <!-- Code symbols -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="64" stroke-linecap="round" stroke-linejoin="round" transform="scale(0.8) translate(128, 128)">
+    <path d="M384 256L256 512L384 768"/>
+    <path d="M640 256L768 512L640 768"/>
+    <path d="M576 256L448 768"/>
+  </g>
+</svg>

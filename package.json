@@ -1,0 +1,74 @@
+{
+  "name": "hush",
+  "version": "1.2.0",
+  "description": "Quiet but always ready to assist - An invisible AI assistant for screen sharing",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build --mac --config.mac.identity=null",
+    "pack": "electron-builder --dir",
+    "generate-icons": "chmod +x build/generate-icons.sh && ./build/generate-icons.sh"
+  },
+  "build": {
+    "appId": "com.kaizo.hush",
+    "productName": "Hush",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": "dmg",
+      "darkModeSupport": true,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "identity": null,
+      "icon": "./build/icon.png",
+      "extendInfo": {
+        "LSUIElement": true
+      }
+    },
+    "files": [
+      "**/*",
+      "!screenshots/*",
+      "!build/*",
+      "!dist/*"
+    ]
+  },
+  "author": {
+    "name": "Kaizo Konpaku",
+    "email": "contact@kaizokonpaku.com",
+    "url": "https://kaizokonpaku.com"
+  },
+  "homepage": "https://hush.kaizokonpaku.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaizokonpaku/hush"
+  },
+  "bugs": {
+    "url": "https://github.com/kaizokonpaku/hush/issues"
+  },
+  "keywords": [
+    "ai-assistant",
+    "screen-sharing",
+    "invisible",
+    "productivity",
+    "coding-assistance",
+    "electron",
+    "macos",
+    "screenshot-analysis"
+  ],
+  "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0" 
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^24.12.0",
+    "electron-reloader": "^1.2.3"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.2.1",
+    "dotenv": "^16.4.5",
+    "highlight.js": "^11.9.0",
+    "marked": "^12.0.0",
+    "svg2img": "^1.0.0-beta.2"
+  }
+}
